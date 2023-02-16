@@ -54,7 +54,8 @@ class ScraperApp {
       const limit = 20;
       const p = req.query.page ? (req.query.page * 1) : 1; // -- to number
       const page = Math.abs(p-1) * limit
-      this.pool.query(`SELECT ad_id, name, location, price FROM ads ORDER BY id LIMIT $1 OFFSET $2`, [
+      // this.pool.query(`SELECT ad_id, name, location, price FROM ads ORDER BY id LIMIT $1 OFFSET $2`, [
+      this.pool.query(`WITH data AS (SELECT ad_id, name, location, price FROM ads ORDER BY id LIMIT $1 OFFSET $2), total_count AS (SELECT COUNT(*) FROM ads) SELECT *, (SELECT COUNT FROM total_count) as total_count FROM data`, [
         limit, page
       ], (err: any, dbRes: any) => {
         if (err) { res.json({ error: 'DB failed to select' }); }
