@@ -1,5 +1,5 @@
 // import scrapy from 'node-scrapy';
-import axios from 'axios';
+// import axios from 'axios';
 import puppeteer, { Browser, Page } from 'puppeteer';
 import { SrealityFlatsModel } from './scrapeModels';
 import { delay } from './utils';
@@ -26,19 +26,22 @@ export default class Scraper {
       const page = i + 1;
       console.log(page);
       const ads: any = await this.scrapeSrealityAds(page);
-      console.log(ads);
-      if (ads.rows === null) { break; }
-      // for(const a of ads.rows) {
-      //   this.scrapedData.push({
-      //     id: 0,
-      //     name: a.flat.name.trim(),
-      //     location: a.flat.location.trim(),
-      //     price: a.flat.price.trim()
-      //   });
-      //   console.log('ad: ', a.flat.name.trim(), a.flat.location.trim(), a.flat.price.trim());
-      // }
+      // console.log(ads, 'ads');
+      // if (ads.rows == null) { break; }
+      if (ads.rows) {
+        for(const a of ads.rows) {
+          const id = a.flat.href.trim().split('/');
+          this.scrapedData.push({
+            id: id[id.length-1],
+            name: a.flat.name.trim(),
+            location: a.flat.location.trim(),
+            price: a.flat.price.trim()
+          });
+          console.log('ad: ', id[id.length-1], a.flat.name.trim(), a.flat.location.trim(), a.flat.price.trim());
+        }  
+      }
     }
-    // console.log(this.scrapedData);
+    console.log(this.scrapedData);
   }
 
   async startBrowser() {
@@ -83,37 +86,6 @@ export default class Scraper {
         waitUntil: ['networkidle2'],
       }).catch(e => console.log(e, 'prdoprd'));
     }
-
-
-
-    // if (!this.page || !this.browser) {
-    //   if (!this.browser) {
-    //     await this.startBrowser();
-    //   }
-
-    //   if (this.browser){
-    //     this.page = await this.browser.newPage();
-        
-    //     this.page.on('error', (error) => {
-    //       console.log(error, 'PAGE ERROR');
-    //     });
-        
-    //     await this.page.setRequestInterception(true);
-        
-    //     this.page.on('request', (req) => req.continue());
-        
-    //     this.page.on('response', (res) => {
-    //       if (res.url() === url && res.status() === 429) {
-    //         console.log(res, 'RES 429');
-    //       }
-    //     });
-    //   }
-    // }
-    // if (this.page) {
-    //   await this.page.goto(url, {
-    //     waitUntil: ['domcontentloaded', 'networkidle2'],
-    //   }).catch(e => console.log(e, 'prdoprd'));
-    // }
   }
 
   async scrapeSrealityAds(page: number) {
@@ -126,6 +98,7 @@ export default class Scraper {
         var HTML = await this.page.mainFrame().content();
         const parsedJSON = scrapy.extract(HTML, SrealityFlatsModel);
         resolve(parsedJSON);
+        // resolve(JSON.stringify(parsedJSON));
       }
       reject(null);
     });
