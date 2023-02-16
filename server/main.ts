@@ -17,7 +17,7 @@ class ScraperApp {
     this.isScraping = false;
     this.scraper = undefined;
     this.pool = new Pool({
-      database: 'myDB',
+      database: 'mydb',
       user: 'test',
       password: 'test123',
     });

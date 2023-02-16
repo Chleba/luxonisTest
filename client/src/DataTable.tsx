@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const DataTable: React.FC = () => {
 
-  const [scannedData, setScannedData] = useState([]);
+  const [scannedData, setScannedData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   // const [scanningInterval, setScanningInterval] = useState<any | null>(null);
   const [page, setPage] = useState(1);
@@ -83,7 +83,7 @@ const DataTable: React.FC = () => {
               if (loading) { 
                 return (<Col><span>Loading...</span></Col>);
               } else {
-                if (!scannedData.length) {
+                if (!scannedData) {
                   return (<Col><Button variant='warning' onClick={getData}>Refresh Data</Button></Col>);
                 } else {
                   return scannedData.map((data: any) => {
@@ -99,7 +99,7 @@ const DataTable: React.FC = () => {
                   });
                 }
               }
-            })()
+            }).bind(this)()
           }
         </Col>
       </Row>
