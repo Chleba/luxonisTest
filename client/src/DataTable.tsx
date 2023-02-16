@@ -29,7 +29,6 @@ const DataTable: React.FC = () => {
       console.log(err);
     }).finally(() => {
       setLoading(false);
-      // makePageItems();
     })
   };
 
@@ -39,7 +38,6 @@ const DataTable: React.FC = () => {
   }
 
   const makePageItems = () => {
-    console.log('makePageItems', scannedData)
     if (scannedData.length) {
       const dataItem: any = scannedData[0];
       const total = dataItem.total_count;
