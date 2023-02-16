@@ -48,6 +48,20 @@ class ScraperApp {
       }
       res.send(this.scraper?.scapingState ? 'scraping in progress...' : 'done scraping');
     });
+
+    this.app.get('/getData', (req: any, res: any) => {
+      const limit = 20;
+      const p = req.query.page ? (req.query.page * 1) : 1; // -- to number
+      const page = Math.abs(p-1) * limit
+      this.pool.query(`SELECT ad_id, name, location, price FROM ads ORDER BY id LIMIT $1 OFFSET $2`, [
+        limit, page
+      ], (err: any, dbRes: any) => {
+        if (err) { res.json({ error: 'DB failed to select' }); }
+        else {
+          res.json({ data: dbRes.rows });
+        }
+      });
+    });
   }
 
   batchCB(data: any[]) {

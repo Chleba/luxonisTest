@@ -29,7 +29,6 @@ export default class Scraper {
     this.scapingState = true;
     for (let i=0; i<30; i++) {
       const page = i + 1;
-      console.log(page);
       const ads: any = await this.scrapeSrealityAds(page);
       // console.log(ads, 'ads');
       // if (ads.rows == null) { break; }
@@ -46,7 +45,7 @@ export default class Scraper {
           console.log('ad: ', id[id.length-1], a.flat.name.trim(), a.flat.location.trim(), a.flat.price.trim());
         }
         this.storeBatchCB(batch);
-        this.scrapedData.concat(batch);
+        this.scrapedData = this.scrapedData.concat(batch);
       }
     }
     this.scapingState = false;
