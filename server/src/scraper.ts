@@ -12,16 +12,21 @@ export default class Scraper {
   scrapedItemsNum: number;
   browser?: Browser;
   scrapedData: any[];
+  storeBatchCB: Function;
+  scapingState: boolean;
 
-  constructor() {
+  constructor(batchCB: Function) {
     this.URL = 'https://www.sreality.cz/hledani/prodej/byty';
     this.page = undefined;
     this.scrapedItemsNum = 0;
     this.browser = undefined;
     this.scrapedData = [];
+    this.storeBatchCB = batchCB;
+    this.scapingState = false;
   }
 
   async start() {
+    this.scapingState = true;
     for (let i=0; i<30; i++) {
       const page = i + 1;
       console.log(page);
@@ -29,23 +34,27 @@ export default class Scraper {
       // console.log(ads, 'ads');
       // if (ads.rows == null) { break; }
       if (ads.rows) {
+        const batch = [];
         for(const a of ads.rows) {
           const id = a.flat.href.trim().split('/');
-          this.scrapedData.push({
+          batch.push({
             id: id[id.length-1],
             name: a.flat.name.trim(),
             location: a.flat.location.trim(),
             price: a.flat.price.trim()
           });
           console.log('ad: ', id[id.length-1], a.flat.name.trim(), a.flat.location.trim(), a.flat.price.trim());
-        }  
+        }
+        this.storeBatchCB(batch);
+        this.scrapedData.concat(batch);
       }
     }
+    this.scapingState = false;
     console.log(this.scrapedData);
   }
 
   async startBrowser() {
-    this.browser = await puppeteer.launch({ headless: false });
+    this.browser = await puppeteer.launch({ headless: true });
     this.browser.on('closed', () => {
       this.closeBrowser();
     })
