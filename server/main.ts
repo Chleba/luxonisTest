@@ -1,7 +1,7 @@
 import express, { Express } from 'express';
 import Scraper from './src/scraper';
 import { Pool } from 'pg';
-
+import cors from 'cors';
 
 class ScraperApp {
 
@@ -27,7 +27,8 @@ class ScraperApp {
 
   start() {
     this.scraper = new Scraper(this.batchCB.bind(this));
-    this.app = express();
+    this.app.use(express.json());
+    this.app.use(cors());
     this.app.listen(this.port, () => {
       console.log(`Scraper App listening - port ${this.port}`);
     });
