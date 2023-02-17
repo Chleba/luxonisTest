@@ -17,9 +17,10 @@ class ScraperApp {
     this.isScraping = false;
     this.scraper = undefined;
     this.pool = new Pool({
-      database: 'mydb',
-      user: 'test',
-      password: 'test123',
+      connectionString: `postgresql://test:test123@db:5432/mydb`
+      // database: 'mydb',
+      // user: 'test',
+      // password: 'test123',
     });
 
     this.start();
@@ -58,8 +59,10 @@ class ScraperApp {
       this.pool.query(`WITH data AS (SELECT ad_id, name, location, price FROM ads ORDER BY id LIMIT $1 OFFSET $2), total_count AS (SELECT COUNT(*) FROM ads) SELECT *, (SELECT COUNT FROM total_count) as total_count FROM data`, [
         limit, page
       ], (err: any, dbRes: any) => {
-        if (err) { res.json({ error: 'DB failed to select' }); }
-        else {
+        if (err) {
+          console.log(err, 'server db ERROR');
+          res.json({ error: 'DB failed to select', err: err });
+        } else {
           res.json({ data: dbRes.rows });
         }
       });

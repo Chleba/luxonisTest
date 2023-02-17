@@ -53,7 +53,7 @@ export default class Scraper {
   }
 
   async startBrowser() {
-    this.browser = await puppeteer.launch({ headless: true });
+    this.browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
     this.browser.on('closed', () => {
       this.closeBrowser();
     })
